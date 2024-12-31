@@ -1,0 +1,1 @@
+# Second brain backend using Express, MongoDB, Zod and TypeScript
