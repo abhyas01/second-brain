@@ -1,5 +1,6 @@
 import { express, z, bcrypt, jwt, JWT_SECRET, JWT_EXPIRY } from '../configs/config';
-import { UserModel } from '../db-store/db';
+import usersMiddleware from '../middlewares/users/usersMiddleware';
+import { UserModel, ContentModel } from '../db-store/db';
 
 const userRouter: express.Router = express.Router();
 
@@ -89,7 +90,7 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
   }
 });
 
-userRouter.post('/content', async (req: express.Request, res: express.Response): Promise<void> => {
+userRouter.post('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
 
 });
 
