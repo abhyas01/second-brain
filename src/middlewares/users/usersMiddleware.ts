@@ -1,5 +1,4 @@
 import { express, jwt, JWT_SECRET } from '../../configs/config';
-import { CustomRequest, CustomJwtPayload } from './interfaces';
 
 function usersMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): any {
   try{
@@ -9,7 +8,7 @@ function usersMiddleware(req: express.Request, res: express.Response, next: expr
     }
     jwt.verify(<string>token, <string>JWT_SECRET, (err, decoded) => {
       if(!err){
-        (req as CustomRequest).id = (decoded as CustomJwtPayload).id;
+        req.id = (decoded as jwt.JwtPayload).id;
         next();
       } else{
         res.status(401).json({ msg: 'Unauthorized' });
