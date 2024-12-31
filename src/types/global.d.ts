@@ -9,8 +9,8 @@ declare global {
 }
 
 declare module 'jsonwebtoken' {
-  export interface JwtPayload {
-    id: string;
+  interface JwtPayload {
+    id?: string;
   }
 }
 
