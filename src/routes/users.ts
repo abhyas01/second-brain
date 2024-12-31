@@ -60,8 +60,33 @@ userRouter.post('/signup', async (req: express.Request, res: express.Response): 
   }
 });
 
-userRouter.post('/signin', async (req: express.Request, res: express.Response): Promise<void> => {
-
+userRouter.post('/signin', async (req: express.Request, res: express.Response): Promise<any> => {
+  try{
+    const schema: z.AnyZodObject = z.object({
+      username: z.string().min(3).max(10),
+      password: z.string().min(8).max(20)
+    }).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success) return res.status(403).json({ msg: 'Incorrect credentials' });
+    const findUser = await UserModel.findOne({
+      username: req.body.username
+    });
+    if (!findUser) return res.status(403).json({ msg: 'Incorrect credentials' });
+    const isPassCorrect: boolean = await bcrypt.compare(req.body.password, findUser.password);
+    if (!isPassCorrect) return res.status(403).json({ msg: 'Incorrect credentials' });
+    const token: string = jwt.sign({
+      id: findUser._id
+    }, JWT_SECRET as string, {
+      expiresIn: JWT_EXPIRY
+    });
+    res.status(200).json({
+      token: token
+    });
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
 });
 
 userRouter.post('/content', async (req: express.Request, res: express.Response): Promise<void> => {
