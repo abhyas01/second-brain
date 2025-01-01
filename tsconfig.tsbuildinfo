@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/configs/config.ts","./src/db-store/db.ts","./src/middlewares/users/usersmiddleware.ts","./src/routes/public.ts","./src/routes/users.ts","./src/types/global.d.ts"],"version":"5.7.2"}
+{"root":["./src/index.ts","./src/configs/config.ts","./src/db-store/db.ts","./src/limiters/requestlimiter.ts","./src/middlewares/users/usersmiddleware.ts","./src/routes/public.ts","./src/routes/users.ts","./src/types/global.d.ts"],"version":"5.7.2"}

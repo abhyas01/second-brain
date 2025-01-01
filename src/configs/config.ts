@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import z from 'zod';
 import bcrypt from 'bcrypt';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -24,4 +25,5 @@ export {
   bcrypt,
   JWT_SECRET,
   JWT_EXPIRY,
+  rateLimit
 };
