@@ -149,8 +149,8 @@ userRouter.post('/content', usersMiddleware, async (req: express.Request, res: e
       }),
       title: z.string().min(3, {
         message: 'Title should be of at least 3 characters'
-      }).max(20, {
-        message: 'Title should be of at mosst 20 characters'
+      }).max(30, {
+        message: 'Title should be of at most 30 characters'
       }),
       tags: z.array(z.string())
     }).strict();
@@ -211,15 +211,23 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
   }
 });
 
-userRouter.delete('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
-  try{
+userRouter.delete('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+  try {
     const schema: z.AnyZodObject = z.object({
-      
-    })
-  } catch(err){
-    res.status(500).json({
-      msg: 'Server is facing some error'
+      contentId: z.string().length(24).regex(/^[a-fA-F0-9]+$/)
+    }).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success) return res.status(403).json({ msg: 'Invalid ID' });
+    // const body: z.infer<typeof schema> = req.body;
+    const content = await ContentModel.findOne({
+      _id: req.body.contentId,
+      userId: req.id
     });
+    if (!content) return res.status(403).json({ msg: 'Invalid ID' });
+    await ContentModel.deleteOne({ _id: req.body.contentId, userId: req.id });
+    res.status(200).json({ msg: 'Content deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ msg: 'Server is facing some error' });
   }
 });
 
