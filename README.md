@@ -1,0 +1,1 @@
+# Second brain app using Express, MongoDB, Zod, TypeScript, Tailwind, Recoil and React
