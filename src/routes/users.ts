@@ -37,6 +37,7 @@ userRouter.post('/signup', async (req: express.Request, res: express.Response): 
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    // const body: z.infer<typeof schema> = req.body;
     const findDuplicate = await UserModel.findOne({
       username: req.body.username
     });
@@ -69,6 +70,7 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(403).json({ msg: 'Incorrect credentials' });
+    // const body: z.infer<typeof schema> = req.body;
     const findUser = await UserModel.findOne({
       username: req.body.username
     });
@@ -92,7 +94,7 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
 
 userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
-    const schema = z.object({
+    const schema: z.AnyZodObject = z.object({
       title: z.string().min(1, {
         message: 'Tag Name must be of at least 1 character'
       }).max(10, {
@@ -101,6 +103,7 @@ userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: expr
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    // const body: z.infer<typeof schema> = req.body;
     const tagTitle = req.body.title;
     const tagExists = await TagsModel.findOne({
       title: tagTitle
@@ -110,7 +113,6 @@ userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: expr
       title: tagTitle
     });
     const tagCreatedObject = tagCreated.toObject() as Record<string, any>;
-    delete tagCreatedObject._id;
     delete tagCreatedObject.__v;
     res.status(200).json({
       tagCreated: true,
@@ -138,7 +140,7 @@ userRouter.get('/tags', usersMiddleware, async (req: express.Request, res: expre
 
 userRouter.post('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
-    const schema = z.object({
+    const schema: z.AnyZodObject = z.object({
       type: z.enum(['Document', 'Tweet', 'YouTube', 'Link', 'Social'], {
         message: 'type can only be: Document/Tweet/YouTube/Link/Social'
       }),
@@ -154,6 +156,7 @@ userRouter.post('/content', usersMiddleware, async (req: express.Request, res: e
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    // const body: z.infer<typeof schema> = req.body;
     let validTags;
     try{
       validTags = await TagsModel.find({
@@ -165,15 +168,19 @@ userRouter.post('/content', usersMiddleware, async (req: express.Request, res: e
     if (validTags.length !== req.body.tags.length){
       return res.status(411).json({ msg: 'Invalid tags' });
     }
-    await ContentModel.create({
+    const content = await ContentModel.create({
       type: req.body.type,
       link: req.body.link,
       title: req.body.title,
       tags: req.body.tags,
       userId: req.id
     });
+    const contentObject = content.toObject() as Record<string, any>;
+    delete contentObject.userId;
+    delete contentObject.__v;
     res.status(200).json({
       contentCreated: true,
+      content: contentObject
     });
   } catch(err){
     res.status(500).json({
@@ -192,7 +199,7 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
       })
       .populate({
         path: 'tags',
-        select: 'title -_id'
+        select: 'title'
       });
     res.status(200).json({
       contents
@@ -205,7 +212,15 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
 });
 
 userRouter.delete('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
-
+  try{
+    const schema: z.AnyZodObject = z.object({
+      
+    })
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
 });
 
 userRouter.post('/brain/share', async (req: express.Request, res: express.Response): Promise<void> => {
