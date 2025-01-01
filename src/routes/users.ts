@@ -186,9 +186,7 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
   try{
       const contents = await ContentModel.find({
         userId: req.id
-      }
-        , '-__v -_id'
-      ).populate({
+      }, '-__v').populate({
         path: 'userId',
         select: 'username -_id'
       })
@@ -206,7 +204,7 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
   }
 });
 
-userRouter.delete('/content', async (req: express.Request, res: express.Response): Promise<void> => {
+userRouter.delete('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
 
 });
 
