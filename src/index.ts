@@ -13,13 +13,13 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(limiter);
+app.use(limiter as express.RequestHandler);
 
 app.use(bodyParser.json() as express.RequestHandler);
 app.use(bodyParser.urlencoded({ extended: true }) as express.RequestHandler);
 
-app.use('/api/v1/users/', userRouter);
-app.use('/api/v1/public/', publicRouter);
+app.use('/api/v1/users/', userRouter as express.RequestHandler);
+app.use('/api/v1/public/', publicRouter as express.RequestHandler);
 
 (async function(){
   try{
