@@ -1,8 +1,19 @@
 import { express, bodyParser, mongoose, MONGO_URL, PORT } from './configs/config';
 import userRouter from './routes/users';
 import publicRouter from './routes/public';
+import rateLimit from 'express-rate-limit';
 
 const app: express.Application = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: "Too many requests, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
 
 app.use(bodyParser.json() as express.RequestHandler);
 app.use(bodyParser.urlencoded({ extended: true }) as express.RequestHandler);
