@@ -9,6 +9,9 @@ dist-ssr/
 .env
 !.env.example
 
+# Ignore MacOS metadata files
+._*
+
 # Logs
 logs/
 *.log
