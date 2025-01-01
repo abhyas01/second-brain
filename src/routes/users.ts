@@ -1,6 +1,6 @@
 import { express, z, bcrypt, jwt, JWT_SECRET, JWT_EXPIRY } from '../configs/config';
 import usersMiddleware from '../middlewares/users/usersMiddleware';
-import { UserModel, ContentModel } from '../db-store/db';
+import { UserModel, ContentModel, TagsModel } from '../db-store/db';
 
 const userRouter: express.Router = express.Router();
 
@@ -90,12 +90,120 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
   }
 });
 
-userRouter.post('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
-
+userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+  try{
+    const schema = z.object({
+      title: z.string().min(1, {
+        message: 'Tag Name must be of at least 1 character'
+      }).max(10, {
+        message: 'Tag Name must be of at most 10 characters'
+      })
+    }).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    const tagTitle = req.body.title;
+    const tagExists = await TagsModel.findOne({
+      title: tagTitle
+    });
+    if (tagExists) return res.status(403).json({ msg: 'Tag already exists, illegal request' });
+    const tagCreated = await TagsModel.create({
+      title: tagTitle
+    });
+    const tagCreatedObject = tagCreated.toObject() as Record<string, any>;
+    delete tagCreatedObject._id;
+    delete tagCreatedObject.__v;
+    res.status(200).json({
+      tagCreated: true,
+      tagContent: tagCreatedObject
+    });
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
 });
 
-userRouter.get('/content', async (req: express.Request, res: express.Response): Promise<void> => {
+userRouter.get('/tags', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
+  try{
+    const tags = await TagsModel.find({}).select('title _id');
+    res.status(200).json({
+      tags: tags
+    });
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
+});
 
+userRouter.post('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+  try{
+    const schema = z.object({
+      type: z.enum(['Document', 'Tweet', 'YouTube', 'Link', 'Social'], {
+        message: 'type can only be: Document/Tweet/YouTube/Link/Social'
+      }),
+      link: z.string().url({
+        message: 'Please provide a valid URL starting with http:// or https://'
+      }),
+      title: z.string().min(3, {
+        message: 'Title should be of at least 3 characters'
+      }).max(20, {
+        message: 'Title should be of at mosst 20 characters'
+      }),
+      tags: z.array(z.string())
+    }).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    let validTags;
+    try{
+      validTags = await TagsModel.find({
+        _id: { $in: req.body.tags }
+      });
+    } catch(err){
+      return res.status(411).json({ msg: 'Invalid tags' });
+    }
+    if (validTags.length !== req.body.tags.length){
+      return res.status(411).json({ msg: 'Invalid tags' });
+    }
+    await ContentModel.create({
+      type: req.body.type,
+      link: req.body.link,
+      title: req.body.title,
+      tags: req.body.tags,
+      userId: req.id
+    });
+    res.status(200).json({
+      contentCreated: true,
+    });
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
+});
+
+userRouter.get('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
+  try{
+      const contents = await ContentModel.find({
+        userId: req.id
+      }
+        , '-__v -_id'
+      ).populate({
+        path: 'userId',
+        select: 'username -_id'
+      })
+      .populate({
+        path: 'tags',
+        select: 'title -_id'
+      });
+    res.status(200).json({
+      contents
+    });
+  } catch(err){
+    res.status(500).json({
+      msg: 'Server is facing some error'
+    });
+  }
 });
 
 userRouter.delete('/content', async (req: express.Request, res: express.Response): Promise<void> => {

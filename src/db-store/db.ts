@@ -12,7 +12,7 @@ const UserSchema = new Schema({
 const ContentSchema = new Schema({
   type: {
     type: String,
-    enum: ['document', 'tweet', 'youtube', 'link', 'social'],
+    enum: ['Document', 'Tweet', 'YouTube', 'Link', 'Social'],
     required: true
   },
   link: { type: String, required: true },
@@ -34,7 +34,6 @@ const UserModel = Model('users', UserSchema);
 const ContentModel = Model('content', ContentSchema);
 const TagsModel = Model('tags', TagsSchema);
 const LinkModel = Model('link', LinkSchema);
-
 
 export {
   UserModel,

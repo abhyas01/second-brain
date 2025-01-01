@@ -23,5 +23,5 @@ export {
   mongoose,
   bcrypt,
   JWT_SECRET,
-  JWT_EXPIRY
+  JWT_EXPIRY,
 };
