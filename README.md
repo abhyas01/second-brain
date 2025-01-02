@@ -1,1 +1,1 @@
-# Second brain app using Express, MongoDB, Zod, TypeScript, Tailwind, Recoil and React
+# Second brain app using Express, MongoDB, JWTs, Zod, Bcrypt, TypeScript, TailwindCSS, Recoil and React

@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "description": "Frontend of Second Brain, using React, Recoil and TypeScript",
+  "description": "Frontend of Second Brain, using React, Recoil, TailwindCSS and TypeScript",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
