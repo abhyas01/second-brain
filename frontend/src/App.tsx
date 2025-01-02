@@ -1,11 +1,12 @@
 import { ReactElement } from "react";
 import Button from "./components/ui/Button";
 import PlusIcon from "./components/ui/icons/PlusIcon";
+import ShareIcon from "./components/ui/icons/ShareIcon";
 
 function App(): ReactElement {
   return (
     <>
-    
+
       <Button 
         variant="primary"
         size="sm"
@@ -15,7 +16,7 @@ function App(): ReactElement {
           <PlusIcon size="sm" strokeWidth="sm" />
         }
         endIcon={
-          <PlusIcon size="sm" strokeWidth="sm" />
+          <ShareIcon size="sm" strokeWidth="sm" />
         }
         className="mx-2"
       />
@@ -26,7 +27,10 @@ function App(): ReactElement {
         text="Share"
         onClick={() => {}}
         startIcon={
-          <PlusIcon size="md" strokeWidth="sm" />
+          <PlusIcon size="md" strokeWidth="md" />
+        }
+        endIcon={
+          <ShareIcon size="md" strokeWidth="md" />
         }
         className="mx-2"
       />
@@ -36,8 +40,11 @@ function App(): ReactElement {
         size="lg"
         text="Share"
         onClick={() => {}}
+        startIcon={
+          <ShareIcon size="lg" strokeWidth="lg" />
+        }
         endIcon={
-          <PlusIcon size="md" strokeWidth="lg" />
+          <PlusIcon size="lg" strokeWidth="lg" />
         } 
         className="mx-2 my-1"
       />

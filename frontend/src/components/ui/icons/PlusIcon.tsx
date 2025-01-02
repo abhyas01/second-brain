@@ -5,13 +5,13 @@ import { IconInput } from './interfaces/icon-interfaces';
 const sizeStyles: Record<Size, string> = {
   "sm": "size-4",
   "md": "size-5",
-  "lg": "size-8"
+  "lg": "size-6"
 };
 
 const strokeWidth: Record<Size, string> = {
   "sm": "1.5",
   "md": "2",
-  "lg": "2.5"
+  "lg": "2.3"
 };
 
 function PlusIcon(props: IconInput): ReactElement{
