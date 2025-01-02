@@ -152,7 +152,11 @@ userRouter.post('/content', usersMiddleware, async (req: express.Request, res: e
       }).max(30, {
         message: 'Title should be of at most 30 characters'
       }),
-      tags: z.array(z.string())
+      tags: z.array(z.string().length(24, {
+        message: 'Invalid tags'
+      }).regex(/^[a-fA-F0-9]+$/, {
+        message: 'Invalid tags'
+      }))
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
@@ -199,7 +203,7 @@ userRouter.get('/content', usersMiddleware, async (req: express.Request, res: ex
       })
       .populate({
         path: 'tags',
-        select: 'title'
+        select: 'title _id'
       });
     res.status(200).json({
       contents
