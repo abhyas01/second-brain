@@ -1,7 +1,8 @@
 {
   "name": "brainly-backend",
-  "version": "1.0.0",
-  "description": "Backend of Second Brain, using Mongo, Express, Zod and TypeScript",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Backend of Second Brain, using MongoDB, Express, JWTs, Zod, Bcrypt and TypeScript",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -b",
@@ -11,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abhyas01/backend-second-brain-ts.git"
+    "url": "git+https://github.com/abhyas01/second-brain.git"
   },
   "keywords": [],
   "author": "Abhyas Mall",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/abhyas01/backend-second-brain-ts/issues"
+    "url": "https://github.com/abhyas01/second-brain/issues"
   },
-  "homepage": "https://github.com/abhyas01/backend-second-brain-ts#readme",
+  "homepage": "https://github.com/abhyas01/second-brain#readme",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/body-parser": "^1.19.5",

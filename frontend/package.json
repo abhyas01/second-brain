@@ -1,14 +1,26 @@
 {
   "name": "brainly-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "description": "Frontend of Second Brain, using React, Recoil and TypeScript",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhyas01/second-brain.git"
+  },
+  "keywords": [],
+  "author": "Abhyas Mall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhyas01/second-brain/issues"
+  },
+  "homepage": "https://github.com/abhyas01/second-brain#readme",
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
