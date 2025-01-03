@@ -12,7 +12,10 @@ publicRouter.get('/brain/:shareLink', async (req: express.Request, res: express.
     if (!response) return res.status(404).json({ msg: "Page not found" });
     const contentResponse = await ContentModel.find({
       userId: response.userId
-    }, '-userId -__v');
+    }, '-userId -__v').populate({
+      path: 'tags',
+      select: '_id title'
+    });
     const userResponse = await UserModel.findOne({
       _id: response.userId
     }, '-_id, -password -__v');
