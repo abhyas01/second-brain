@@ -16,8 +16,11 @@ publicRouter.get('/brain/:shareLink', async (req: express.Request, res: express.
     const userResponse = await UserModel.findOne({
       _id: response.userId
     }, '-_id, -password -__v');
+    if (!userResponse){
+      return res.status(500).json({ msg: "Some error has occured." });
+    }
     res.status(200).json({
-      username: userResponse?.username,
+      username: userResponse.username,
       content: contentResponse
     });
   } catch(err){
@@ -27,4 +30,4 @@ publicRouter.get('/brain/:shareLink', async (req: express.Request, res: express.
   }
 });
 
-export default publicRouter;
+export default publicRouter; 
