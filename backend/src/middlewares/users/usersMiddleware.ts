@@ -1,5 +1,5 @@
 import { express, jwt, JWT_SECRET } from '../../configs/config';
-import { UserModel } from '../../db-store/db';
+import { isTokenRevoked } from "../../utils/revokeLogic";
 
 function usersMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): any {
   try{
@@ -9,16 +9,10 @@ function usersMiddleware(req: express.Request, res: express.Response, next: expr
     }
     jwt.verify(<string>token, <string>JWT_SECRET, async (err, decoded): Promise<any> => {
       if(!err){
-        const userId = (decoded as jwt.JwtPayload).id;
-        let findUser;
-        try{
-          findUser = await UserModel.findOne({
-            _id: userId
-          });
-        } catch(err){
-          return res.status(403).json( { msg: 'Couldn\'t find your account' } );
-        }
-        if (!findUser) return res.status(403).json( { msg: 'Couldn\'t find your account' } );
+        const userId: string = (decoded as jwt.JwtPayload).id as string;
+        const response: Boolean = await isTokenRevoked(token, userId);
+        if(response) return res.status(401).json({ msg: 'Unauthorized' });
+        req.token = token;
         req.id = userId;
         next();
       } else{

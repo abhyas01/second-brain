@@ -1,6 +1,8 @@
+import { UserModel, ContentModel, TagsModel, LinkModel } from '../db-store/db';
 import { express, z, bcrypt, jwt, JWT_SECRET, JWT_EXPIRY } from '../configs/config';
+import { generateGloballyUniqueString } from '../utils/helperFuncs';
+import { revokeToken } from '../utils/revokeLogic';
 import usersMiddleware from '../middlewares/users/usersMiddleware';
-import { UserModel, ContentModel, TagsModel } from '../db-store/db';
 
 const userRouter: express.Router = express.Router();
 
@@ -235,8 +237,55 @@ userRouter.delete('/content', usersMiddleware, async (req: express.Request, res:
   }
 });
 
-userRouter.post('/brain/share', async (req: express.Request, res: express.Response): Promise<void> => {
+userRouter.post('/brain/share', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+  try {
+    const schema: z.AnyZodObject = z.object({
+      share: z.boolean(),
+    }).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success) {
+      return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    }
+    // const body: z.infer<typeof schema> = req.body;
+    if (req.body.share) {
+      const findDuplicate = await LinkModel.findOne({ userId: req.id }, 'hash -_id');
+      if (findDuplicate) {
+        return res.status(200).json({ msg: 'Link sharing already enabled', hash: findDuplicate.hash });
+      } else {
+        const uniqueHash: string = generateGloballyUniqueString();
+        await LinkModel.create({
+          userId: req.id,
+          hash: uniqueHash,
+        });
+        return res.status(200).json({ msg: 'Link sharing enabled', hash: uniqueHash });
+      }
+    } else {
+      await LinkModel.deleteOne({ userId: req.id });
+      return res.status(200).json({ msg: 'Link sharing disabled' });
+    }
+  } catch (err) {
+    res.status(500).json({ msg: 'Server is facing some error' });
+  }
+});
 
+userRouter.post('/logout', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+  try{
+    const schema: z.AnyZodObject = z.object({}).strict();
+    const parsedWithSuccess = schema.safeParse(req.body);
+    if (!parsedWithSuccess.success){
+      return res.status(403).json({ msg: 'Illegal request' });
+    }
+    const response: Boolean = await revokeToken(req.token as string, req.id as string);
+    if (response){
+      return res.status(200).json({ msg: 'Logged out' });
+    } else{
+      return res.status(500).json({
+        msg: 'Server error, could not log you out'
+      });
+    }
+  } catch(err){
+    res.status(500).json({ msg: 'Server is facing some error' });
+  }
 });
 
 export default userRouter;

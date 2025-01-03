@@ -1,17 +1,24 @@
-import { express, bodyParser, mongoose, MONGO_URL, PORT } from './configs/config';
-import { limiter } from './limiters/requestLimiter';
+import { express, bodyParser, mongoose, MONGO_URL, PORT, path } from './configs/config';
+import { limiter, publicLimiter } from './limiters/requestLimiter';
 import userRouter from './routes/users';
 import publicRouter from './routes/public';
 
 const app: express.Application = express();
 
-app.use(limiter as express.RequestHandler);
-
 app.use(bodyParser.json() as express.RequestHandler);
 app.use(bodyParser.urlencoded({ extended: true }) as express.RequestHandler);
 
+app.use('/api/v1/public/', publicLimiter);
+app.use('/api/v1/users/', limiter);
+
+app.use('/static', publicLimiter, express.static(path.join(__dirname, 'public')));
+
 app.use('/api/v1/users/', userRouter as express.RequestHandler);
 app.use('/api/v1/public/', publicRouter as express.RequestHandler);
+
+app.use(publicLimiter, (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+  res.status(404).json({ msg: 'Page Not Found' });
+});
 
 (async function(){
   try{

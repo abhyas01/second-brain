@@ -27,17 +27,27 @@ const TagsSchema = new Schema({
 
 const LinkSchema = new Schema({
   hash: { type: String, required: true, unique: true },
-  userId: { type: ObjectId, ref: 'users', required: true }
+  userId: { type: ObjectId, ref: 'users', required: true, unique: true }
+});
+
+const RevokedTokens = new Schema({
+  userId: { type: ObjectId, ref: 'users', required: true, unique: true },
+  tokens: [{
+    token: String,
+    expiresAt: Date
+  }]
 });
 
 const UserModel = Model('users', UserSchema);
 const ContentModel = Model('content', ContentSchema);
 const TagsModel = Model('tags', TagsSchema);
 const LinkModel = Model('link', LinkSchema);
+const RevokedModel = Model('revoked-tokens', RevokedTokens);
 
 export {
   UserModel,
   ContentModel,
   TagsModel,
-  LinkModel
+  LinkModel,
+  RevokedModel
 };
