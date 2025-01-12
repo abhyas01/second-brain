@@ -37,9 +37,9 @@ const Button = (props: ButtonProps): ReactElement => {
       `}
     >
       { props.startIcon &&
-        <div className="mr-1">
-          {props.startIcon}
-        </div>
+          <div className="mr-1">
+            {props.startIcon}
+          </div>
       }
       {  props.text }
       { props.endIcon && 
