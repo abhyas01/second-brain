@@ -1,13 +1,13 @@
 import { express, jwt, JWT_SECRET } from '../../configs/config';
 import { isTokenRevoked } from "../../utils/revokeLogic";
 
-function usersMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): any {
+function usersMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): express.Response | void {
   try{
     const token = req.headers['auth-key'];
     if (!token || typeof(token) !== 'string'){
       return res.status(401).json({ msg: 'Unauthorized' });
     }
-    jwt.verify(<string>token, <string>JWT_SECRET, async (err, decoded): Promise<any> => {
+    jwt.verify(<string>token, <string>JWT_SECRET, async (err, decoded): Promise<express.Response | void> => {
       if(!err){
         const userId: string = (decoded as jwt.JwtPayload).id as string;
         const response: Boolean = await isTokenRevoked(token, userId);

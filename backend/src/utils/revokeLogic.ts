@@ -1,7 +1,7 @@
 import { RevokedModel } from "../db-store/db";
 import { JWT_EXPIRY } from "../configs/config";
 
-export async function revokeToken(token: string, userId: string): Promise<any> {
+export async function revokeToken(token: string, userId: string): Promise<Boolean> {
   try{
     const tokenExpiry = Number(JWT_EXPIRY as string);
     const expiryDate = new Date(Date.now() + tokenExpiry);

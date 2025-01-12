@@ -6,6 +6,9 @@ const publicRouter: express.Router = express.Router();
 publicRouter.get('/brain/:shareLink', async (req: express.Request, res: express.Response): Promise<any> => {
   try{
     const hash = req.params.shareLink ?? "";
+    if(!hash){
+      return res.status(404).json({ msg: "Page not found" });
+    }
     const response = await LinkModel.findOne({
       hash: hash
     }, '-_id -__v');

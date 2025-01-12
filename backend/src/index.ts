@@ -8,15 +8,15 @@ const app: express.Application = express();
 app.use(bodyParser.json() as express.RequestHandler);
 app.use(bodyParser.urlencoded({ extended: true }) as express.RequestHandler);
 
-app.use('/api/v1/public/', publicLimiter);
-app.use('/api/v1/users/', limiter);
+app.use('/api/v1/public/', publicLimiter as express.RequestHandler);
+app.use('/api/v1/users/', limiter as express.RequestHandler);
 
-app.use('/static', publicLimiter, express.static(path.join(__dirname, 'public')));
+app.use('/static', publicLimiter as express.RequestHandler, express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1/users/', userRouter as express.RequestHandler);
 app.use('/api/v1/public/', publicRouter as express.RequestHandler);
 
-app.use(publicLimiter, (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+app.use(publicLimiter as express.RequestHandler, (req: express.Request, res: express.Response, next: express.NextFunction): void => {
   res.status(404).json({ msg: 'Page Not Found' });
 });
 

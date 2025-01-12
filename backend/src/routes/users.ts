@@ -94,7 +94,7 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
   }
 });
 
-userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+userRouter.post('/tags', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
     const schema: z.AnyZodObject = z.object({
       title: z.string().min(1, {
@@ -127,7 +127,7 @@ userRouter.post('/tags', usersMiddleware, async (req: express.Request, res: expr
   }
 });
 
-userRouter.get('/tags', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
+userRouter.get('/tags', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
   try{
     const tags = await TagsModel.find({}).select('title _id');
     res.status(200).json({
@@ -140,7 +140,7 @@ userRouter.get('/tags', usersMiddleware, async (req: express.Request, res: expre
   }
 });
 
-userRouter.post('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+userRouter.post('/content', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
     const schema: z.AnyZodObject = z.object({
       type: z.enum(['Document', 'Tweet', 'YouTube', 'Link', 'Social'], {
@@ -195,29 +195,36 @@ userRouter.post('/content', usersMiddleware, async (req: express.Request, res: e
   }
 });
 
-userRouter.get('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<void> => {
-  try{
-      const contents = await ContentModel.find({
-        userId: req.id
-      }, '-__v').populate({
+userRouter.get('/content', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
+  try {
+    const contents = await ContentModel.find(
+      { userId: req.id },
+      '-__v'
+    )
+      .populate({
         path: 'userId',
-        select: 'username -_id'
+        select: 'username -_id',
       })
       .populate({
         path: 'tags',
-        select: 'title _id'
-      });
-    res.status(200).json({
-      contents
+        select: 'title _id',
+      })
+      .lean();
+    const transformedContents = contents.map((content: any) => {
+      const { userId, ...rest } = content;
+      return { ...rest, user: userId };
     });
-  } catch(err){
+    res.status(200).json({
+      contents: transformedContents,
+    });
+  } catch (err) {
     res.status(500).json({
-      msg: 'Server is facing some error'
+      msg: 'Server is facing some error',
     });
   }
 });
 
-userRouter.delete('/content', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+userRouter.delete('/content', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try {
     const schema: z.AnyZodObject = z.object({
       contentId: z.string().length(24).regex(/^[a-fA-F0-9]+$/)
@@ -225,10 +232,15 @@ userRouter.delete('/content', usersMiddleware, async (req: express.Request, res:
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(403).json({ msg: 'Invalid ID' });
     // const body: z.infer<typeof schema> = req.body;
-    const content = await ContentModel.findOne({
-      _id: req.body.contentId,
-      userId: req.id
-    });
+    let content;
+    try{
+      content = await ContentModel.findOne({
+        _id: req.body.contentId,
+        userId: req.id
+      });
+    } catch(err){
+      return res.status(403).json({ msg: 'Invalid ID' });
+    }
     if (!content) return res.status(403).json({ msg: 'Invalid ID' });
     await ContentModel.deleteOne({ _id: req.body.contentId, userId: req.id });
     res.status(200).json({ msg: 'Content deleted successfully' });
@@ -237,7 +249,7 @@ userRouter.delete('/content', usersMiddleware, async (req: express.Request, res:
   }
 });
 
-userRouter.post('/brain/share', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+userRouter.post('/brain/share', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try {
     const schema: z.AnyZodObject = z.object({
       share: z.boolean(),
@@ -268,7 +280,7 @@ userRouter.post('/brain/share', usersMiddleware, async (req: express.Request, re
   }
 });
 
-userRouter.post('/logout', usersMiddleware, async (req: express.Request, res: express.Response): Promise<any> => {
+userRouter.post('/logout', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
     const schema: z.AnyZodObject = z.object({}).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
