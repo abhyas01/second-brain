@@ -12,6 +12,7 @@ const TopBar = memo((props: {setModalOpen: (event: React.MouseEvent<HTMLButtonEl
         startIcon={<PlusIcon size="md" strokeWidth="md" />}
         text="Add Content"
         size="md"
+        className="ignore-outside-click"
         />
       <Button
         variant="secondary"
