@@ -13,6 +13,8 @@ export async function revokeToken(token: string, userId: string): Promise<Boolea
         token: token,
         expiresAt: expiryDate
       });
+      const validTokens = revokedTokenDoc.tokens.filter(t => t.expiresAt as Date > new Date());
+      revokedTokenDoc.tokens.splice(0, revokedTokenDoc.tokens.length, ...validTokens);
       await revokedTokenDoc.save();
     } else {
       revokedTokenDoc = await RevokedModel.create({
@@ -33,9 +35,6 @@ export async function isTokenRevoked(token: string, userId: string): Promise<boo
   try {
     const revokedTokenDoc = await RevokedModel.findOne({ userId: userId });
     if (revokedTokenDoc) {
-      const validTokens = revokedTokenDoc.tokens.filter(t => t.expiresAt as Date > new Date());
-      revokedTokenDoc.tokens.splice(0, revokedTokenDoc.tokens.length, ...validTokens);
-      await revokedTokenDoc.save();
       return revokedTokenDoc.tokens.some(t => t.token === token);
     } else{
       return false;

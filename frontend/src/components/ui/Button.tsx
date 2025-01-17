@@ -5,12 +5,12 @@ type Variants = "primary" | "secondary";
 
 interface ButtonProps{
   variant: Variants;
-  size: Size
+  size: Size;
   text: string;
   startIcon?: ReactElement;
   endIcon?: ReactElement;
   className?: string;
-  onClick: () => void;
+  onClick: ((event: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
 };
 
 const defaultStyles = "rounded-md inline-flex justify-center items-center";
@@ -22,8 +22,8 @@ const sizeStyles: Record<Size, string> = {
 };
 
 const variantStyles: Record<Variants, string> = {
-  "primary": "bg-purple-600 text-white",
-  "secondary": "bg-purple-300 text-purple-600"
+  "primary": "bg-purple-600 text-white hover:bg-purple-500 focus:bg-purple-900",
+  "secondary": "bg-purple-300 text-purple-600 hover:bg-slate-300 focus:bg-slate-400"
 };
 
 const Button = (props: ButtonProps): ReactElement => {
@@ -35,6 +35,7 @@ const Button = (props: ButtonProps): ReactElement => {
         ${sizeStyles[props.size]}
         ${props.className}
       `}
+      onClick={props.onClick}
     >
       { props.startIcon &&
           <div className="mr-1">

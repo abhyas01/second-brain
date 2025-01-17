@@ -1,55 +1,24 @@
-import { ReactElement } from "react";
-import Button from "./components/ui/Button";
-import PlusIcon from "./components/ui/icons/PlusIcon";
-import ShareIcon from "./components/ui/icons/ShareIcon";
+import { ReactElement, useCallback, useState } from "react";
+import TopBar from "./components/ui/TopBar";
+import Content from "./components/ui/Content";
+import CreateContentModal from "./components/ui/CreateContentModal";
 
 function App(): ReactElement {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <>
+    <div className="p-4 bg-slate-100 min-h-[100vh]">
+      <TopBar setModalOpen={useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+        setModalOpen(currVal => !currVal)
+        event.currentTarget.blur();
+      }, [])} />
 
-      <Button 
-        variant="primary"
-        size="sm"
-        text="Share"
-        onClick={() => {}}
-        startIcon={
-          <PlusIcon size="sm" strokeWidth="sm" />
-        }
-        endIcon={
-          <ShareIcon size="sm" strokeWidth="sm" />
-        }
-        className="mx-2"
-      />
+      <CreateContentModal open={modalOpen} onClose={() => {
+        setModalOpen(currVal => !currVal);
+      }} />
 
-      <Button 
-        variant="secondary"
-        size="md"
-        text="Share"
-        onClick={() => {}}
-        startIcon={
-          <PlusIcon size="md" strokeWidth="md" />
-        }
-        endIcon={
-          <ShareIcon size="md" strokeWidth="md" />
-        }
-        className="mx-2"
-      />
-
-      <Button 
-        variant="primary"
-        size="lg"
-        text="Share"
-        onClick={() => {}}
-        startIcon={
-          <ShareIcon size="lg" strokeWidth="lg" />
-        }
-        endIcon={
-          <PlusIcon size="lg" strokeWidth="lg" />
-        } 
-        className="mx-2 my-1"
-      />
-
-    </>
+      <Content />
+    </div>
   );
 }
 
