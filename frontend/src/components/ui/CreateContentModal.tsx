@@ -9,32 +9,33 @@ type propsModal = {
 }
 
 const CreateContentModal = forwardRef<HTMLDivElement, propsModal>((props: propsModal, reference): ReactElement | null => {
-if (!props.open){
-  return null;
-}
-  return (
-    <div className="inset-0 fixed w-screen h-screen bg-gradient-to-t from-black/60 to-transparent/50 flex justify-center items-center">
-      <div ref={reference} className="bg-slate-100 p-5 rounded-lg min-w-72 max-w-xl flex flex-col items-stretch gap-4">
+  
+  if (!props.open){
+    return null;
+  }
+    return (
+      <div className="inset-0 fixed w-screen h-screen bg-gradient-to-t from-black/60 to-transparent/50 flex justify-center items-center">
+        <div ref={reference} className="bg-slate-100 p-5 rounded-lg min-w-72 sm:w-96 max-w-xl flex flex-col items-stretch gap-4 mx-5">
+          
+          <div className="flex justify-end items-center mb-6">
+            <CrossIcon size="md" strokeWidth="md" onClick={props.onClose} />
+          </div>
+          
+          <InputBox placeholder="Title" />
+          
+          <InputBox placeholder="Link" />
+          
+          <Button
+            variant="primary"
+            size="md"
+            text="Submit"
+            onClick={props.onClose}
+            className="self-center w-[70%]"
+          />
         
-        <div className="flex justify-end items-center mb-6">
-          <CrossIcon size="md" strokeWidth="md" onClick={props.onClose} />
         </div>
-        
-        <InputBox placeholder="Title" />
-        
-        <InputBox placeholder="Link" />
-        
-        <Button
-          variant="primary"
-          size="md"
-          text="Submit"
-          onClick={props.onClose}
-          className="self-center"
-        />
-      
       </div>
-    </div>
-   );
-});
+    );
+  });
 
 export default CreateContentModal;

@@ -22,11 +22,11 @@ function HamburgerIcon(props: HamburgerIconType): ReactElement {
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
     fill="none" viewBox="0 0 24 24"
-    stroke-width={`${strokeWidth[props.strokeWidth]}`}
+    strokeWidth={`${strokeWidth[props.strokeWidth]}`}
     stroke="currentColor"
     className={`${sizeStyles[props.size]} ${props.className}`}
     onClick={props.onClick}>
-      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
     </svg>
   );
 };

@@ -11,6 +11,7 @@ interface ButtonProps{
   endIcon?: ReactElement;
   className?: string;
   onClick: ((event: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
+  disabled?: boolean;
 };
 
 const defaultStyles = "rounded-md inline-flex justify-center items-center";
@@ -34,6 +35,7 @@ const Button = (props: ButtonProps): ReactElement => {
         ${variantStyles[props.variant]}
         ${sizeStyles[props.size]}
         ${props.className}
+        ${props.disabled ? "disabled hover:cursor-wait opacity-50" : ""}
       `}
       onClick={props.onClick}
     >
@@ -42,7 +44,7 @@ const Button = (props: ButtonProps): ReactElement => {
             {props.startIcon}
           </div>
       }
-      {  props.text }
+      {  props.disabled ? "Loading..." : props.text }
       { props.endIcon && 
         <div className="ml-1">
           {props.endIcon}

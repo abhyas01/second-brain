@@ -10,8 +10,7 @@ const Content = memo((): ReactElement => {
       <Card title="YouTube Video Interest" type="YouTube" link="https://www.youtube.com/watch?v=_ZR3Yjp5t7U&t=62s"/>
       <Card title="YouTube Video Interest" type="YouTube" link="https://www.youtube.com/watch?v=_ZR3Yjp5t7U&t=62s"/>
       <Card title="YouTube Video Interest" type="YouTube" link="https://www.youtube.com/watch?v=_ZR3Yjp5t7U&t=62s"/>
-      <Card title="Tweet Video Interest" type="Tweet" link="https://x.com/ChiragNepal/status/1878654337075019973"/>
-    
+      <Card title="Found this interesting article on Trump" type="Other" link="https://x.com/ChiragNepal/status/1878654337075019973"/>
     </div>
   );
 });

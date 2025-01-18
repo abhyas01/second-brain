@@ -15,7 +15,9 @@ const TopBar = memo((props: TopBar): ReactElement => {
     <div className="h-20 px-4 sm:px-10 min-w-32 flex justify-between items-center max-w-full sm:max-w-xl md:max-w-5xl 2xl:max-w-6xl mx-auto">
       {
         !props.isOpen &&
-        <HamburgerIcon size="md" strokeWidth="lg" className="text-purple-600 cursor-pointer" onClick={props.setSideOpen}  />
+        <div className="hover:scale-110 transition-all duration-200">
+          <HamburgerIcon size="md" strokeWidth="lg" className="text-purple-600 cursor-pointer" onClick={props.setSideOpen}  />
+        </div>
       }
       <div className="flex items-center justify-center ml-auto">
         <Button

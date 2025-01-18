@@ -3,6 +3,7 @@ import { CardProps } from "./interfaces/ui-interfaces";
 import ShareIcon from "./icons/ShareIcon";
 import Tweet from "./Tweet";
 import YouTube from "./YouTube";
+import OtherLink from "./OtherLink";
 
 const Card = memo((props: CardProps): ReactElement => {
   return (
@@ -22,17 +23,15 @@ const Card = memo((props: CardProps): ReactElement => {
           </a>
         </div>
       </div>
-
-      { 
-        props.type === "Tweet" &&
-          <Tweet url={props.link} className="w-full twitter-tweet" divClassName="mt-7 flex justify-center items-center max-w-full" />
-      }
       {
-
-        props.type === "YouTube" &&
+        props.type === "Tweet" ? (
+          <Tweet url={props.link} className="w-full twitter-tweet" divClassName="mt-7 flex justify-center items-center max-w-full" />
+        ) : props.type === "YouTube" ? (
           <YouTube url={props.link} className="mt-7 h-60 w-full" divClassName="max-w-full flex justify-center items-center" />
+        ) : (
+          <OtherLink url={props.link} className="size-32 py-5" divClassName="max-w-full flex justify-center items-center max-h-fit mt-7" />
+        )
       }
-
     </div>
   );
 })
