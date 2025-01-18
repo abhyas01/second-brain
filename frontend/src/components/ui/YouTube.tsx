@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-function YouTube(props: { url: string }): ReactElement {
+function YouTube(props: { url: string, className?: string, divClassName?: string }): ReactElement {
 
   const embedUrl = props.url
     ?.replace("watch?v=", "embed/")
@@ -15,8 +15,9 @@ function YouTube(props: { url: string }): ReactElement {
   }
 
   return (
-    <iframe
-      className="mt-7 h-60"
+    <div className={`${props.divClassName}`}>
+      <iframe
+      className={`${props.className}`}
       src={embedUrl}
       title="YouTube video player"
       style={{ border: "none" }}
@@ -24,6 +25,7 @@ function YouTube(props: { url: string }): ReactElement {
       referrerPolicy="strict-origin-when-cross-origin"
       allowFullScreen
     ></iframe>
+    </div>
   );
 }
 

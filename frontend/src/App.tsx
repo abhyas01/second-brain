@@ -3,10 +3,17 @@ import TopBar from "./components/ui/TopBar";
 import Content from "./components/ui/Content";
 import CreateContentModal from "./components/ui/CreateContentModal";
 import useOutsideClick from "./hooks/useOutsideClick";
+import SideBar from "./components/ui/Sidebar";
 
 function App(): ReactElement {
   const [modalOpen, setModalOpen] = useState(false);
+  const [sideOpen, setSideOpen] = useState(false);
+
   const reference = useRef<HTMLDivElement>(null);
+
+  const onSideClick = useCallback(() => {
+    setSideOpen(currVal => !currVal);
+  }, []);
 
   useOutsideClick({ref: reference, 
                   callback: () => {
@@ -16,17 +23,27 @@ function App(): ReactElement {
                 });
 
   return (
-    <div className="p-4 bg-slate-100 min-h-[100vh]">
-      <TopBar setModalOpen={useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        setModalOpen(currVal => !currVal)
-        event.currentTarget.blur();
-      }, [])} />
+    <div className="bg-slate-100 min-h-[100vh] w-full">
+      
+      <div className="flex mx-auto">  
+        {sideOpen && 
+          <SideBar setSideOpen={onSideClick} />
+        }
+
+        <div className="mx-auto">
+          <TopBar setSideOpen={onSideClick} isOpen={sideOpen} setModalOpen={useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+            setModalOpen(currVal => !currVal)
+            event.currentTarget.blur();
+          }, [])} />
+
+          <Content />
+        </div>
+      </div>
 
       <CreateContentModal ref={reference} open={modalOpen} onClose={() => {
         setModalOpen(currVal => !currVal);
       }} />
-
-      <Content />
+    
     </div>
   );
 }

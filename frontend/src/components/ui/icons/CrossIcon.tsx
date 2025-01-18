@@ -3,19 +3,19 @@ import { Size } from '../interfaces/ui-interfaces';
 import { IconInput } from './interfaces/icon-interfaces';
 
 interface IconInputCross extends IconInput{
-  onClick: () => void
+  onClick?: () => void
 }
 
 const sizeStyles: Record<Size, string> = {
   "sm": "size-4",
   "md": "size-5",
-  "lg": "size-6"
+  "lg": "size-7"
 };
 
 const strokeWidth: Record<Size, string> = {
   "sm": "1.5",
-  "md": "2",
-  "lg": "2.3"
+  "md": "2.3",
+  "lg": "2.5"
 };
 
 function CrossIcon(props: IconInputCross): ReactElement{

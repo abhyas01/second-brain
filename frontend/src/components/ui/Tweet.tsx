@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from "react";
 
-function Tweet(props: { url: string }): ReactElement {
+function Tweet(props: { url: string, className?: string, divClassName?: string }): ReactElement {
 
   useEffect(() => {
     if (!document.querySelector("script[src='https://platform.twitter.com/widgets.js']")) {
@@ -22,8 +22,8 @@ function Tweet(props: { url: string }): ReactElement {
   }
 
   return (
-    <div className="mt-7">
-      <blockquote className="twitter-tweet">
+    <div className={`${props.divClassName}`}>
+      <blockquote className={`${props.className}`}>
         <a href={embedUrl}></a>
       </blockquote>
     </div>

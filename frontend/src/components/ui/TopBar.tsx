@@ -2,25 +2,38 @@ import { ReactElement, memo } from "react";
 import Button from "./Button";
 import ShareIcon from "./icons/ShareIcon";
 import PlusIcon from "./icons/PlusIcon";
+import HamburgerIcon from "./icons/HamburgerIcon";
 
-const TopBar = memo((props: {setModalOpen: (event: React.MouseEvent<HTMLButtonElement>) => void}): ReactElement => {
+interface TopBar{
+  setModalOpen: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  setSideOpen: () => void;
+  isOpen: boolean;
+}
+
+const TopBar = memo((props: TopBar): ReactElement => {
   return(
-    <div className="flex justify-end items-center gap-x-4">
-      <Button
-        variant="primary"
-        onClick={props.setModalOpen}
-        startIcon={<PlusIcon size="md" strokeWidth="md" />}
-        text="Add Content"
-        size="md"
-        className="ignore-outside-click"
-        />
-      <Button
-        variant="secondary"
-        onClick={() => {}}
-        startIcon={<ShareIcon size="md" strokeWidth="md" />}
-        text="Share Brain"
-        size="md"
-        />
+    <div className="h-20 px-4 sm:px-10 min-w-32 flex justify-between items-center max-w-full sm:max-w-xl md:max-w-5xl 2xl:max-w-6xl mx-auto">
+      {
+        !props.isOpen &&
+        <HamburgerIcon size="md" strokeWidth="lg" className="text-purple-600 cursor-pointer" onClick={props.setSideOpen}  />
+      }
+      <div className="flex items-center justify-center ml-auto">
+        <Button
+          variant="primary"
+          onClick={props.setModalOpen}
+          startIcon={<PlusIcon size="sm" strokeWidth="sm" />}
+          text="Add Content"
+          size="sm"
+          className="ignore-outside-click mr-2"
+          />
+        <Button
+          variant="secondary"
+          onClick={() => {}}
+          startIcon={<ShareIcon size="sm" strokeWidth="sm" />}
+          text="Share Brain"
+          size="sm"
+          />
+      </div>
     </div>
   );
 });

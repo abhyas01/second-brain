@@ -17,7 +17,7 @@ if (!props.open){
       <div ref={reference} className="bg-slate-100 p-5 rounded-lg min-w-72 max-w-xl flex flex-col items-stretch gap-4">
         
         <div className="flex justify-end items-center mb-6">
-          <CrossIcon size="md" strokeWidth="lg" onClick={props.onClose} />
+          <CrossIcon size="md" strokeWidth="md" onClick={props.onClose} />
         </div>
         
         <InputBox placeholder="Title" />
