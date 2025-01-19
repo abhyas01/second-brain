@@ -4,9 +4,14 @@ import SidebarItem from "./SidebarItem";
 import TwitterIcon from "./icons/TwitterIcon";
 import YoutubeIcon from "./icons/YouTubeIcon";
 import DocumentIcon from "./icons/DocumentIcon";
+import HamburgerIcon from "./icons/HamburgerIcon";
 import Logout from "./icons/Logout";
 
-const SideBar = memo((props: {setSideOpen: () => void}): ReactElement => {
+interface SideBarType{
+  setSideOpen: () => void;
+}
+
+const SideBar = memo((props: SideBarType): ReactElement => {
 
   return(
     <div className="flex flex-col justify-between items-stretch h-screen bg-white left-0 top-0 fixed w-full sm:border-r sm:min-w-56 sm:max-w-56 sm:sticky p-8 sm:p-3">
@@ -20,12 +25,14 @@ const SideBar = memo((props: {setSideOpen: () => void}): ReactElement => {
       </div>
 
       <div>
-        <SidebarItem text="Tweet Links" icon={<TwitterIcon />} />
-        <SidebarItem text="YouTube Links" icon={<YoutubeIcon />} />
-        <SidebarItem text="Other Links" icon={<DocumentIcon />} />
+        <SidebarItem text="All" icon={<HamburgerIcon size="sm" strokeWidth="sm" />} />
+        <SidebarItem text="Twitter" icon={<TwitterIcon />} />
+        <SidebarItem text="YouTube" icon={<YoutubeIcon />} />
+        <SidebarItem text="Other" icon={<DocumentIcon />} />
       </div>
 
       <div>
+        <SidebarItem text="Stop Brain Share" icon={<CrossIcon size="lg" strokeWidth="sm" className="text-black" />} />
         <SidebarItem text="Logout" icon={<Logout size="lg" strokeWidth="sm" />} />
       </div>
 

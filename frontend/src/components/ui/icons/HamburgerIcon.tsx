@@ -7,13 +7,13 @@ interface HamburgerIconType extends IconInput{
 }
 
 const sizeStyles: Record<Size, string> = {
-  "sm": "size-8",
+  "sm": "size-7",
   "md": "size-9",
   "lg": "size-11"
 };
 
 const strokeWidth: Record<Size, string> = {
-  "sm":"1.0",
+  "sm":"0.9",
   "md": "1.5",
   "lg": "2.0"
 }

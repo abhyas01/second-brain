@@ -4,46 +4,70 @@ import Content from "../components/ui/Content";
 import CreateContentModal from "../components/ui/CreateContentModal";
 import useOutsideClick from "../hooks/useOutsideClick";
 import SideBar from "../components/ui/Sidebar";
+import BrainShareModal from "../components/ui/BrainShareModal";
+// import Loading from "../components/ui/Loading";
 
 const Dashboard = memo((): ReactElement => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [sideOpen, setSideOpen] = useState(false);
+  const [sharingModalOpen, setSharingModalOpen] = useState(false);
+  const [sideOpen, setSideOpen] = useState(true);
 
-  const reference = useRef<HTMLDivElement>(null);
+  const referenceContentModal = useRef<HTMLDivElement>(null);
+  const referenceBrainShareModal = useRef<HTMLDivElement>(null);
 
   const onSideClick = useCallback(() => {
     setSideOpen(currVal => !currVal);
   }, []);
 
-  useOutsideClick({ref: reference, 
+  const onModalOpen = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setModalOpen(currVal => !currVal)
+    event.currentTarget.blur();
+  }, []);
+
+  // Non UI Feature
+  const showBrainModal = useCallback((event: React.MouseEvent<HTMLButtonElement>): void => {
+    setSharingModalOpen(currVal => !currVal);
+    event.currentTarget.blur();
+  }, []);
+
+  useOutsideClick({ref: referenceContentModal, 
                   callback: () => {
                     setModalOpen(currVal => !currVal);
                   },
                   when: modalOpen
                 });
 
+  useOutsideClick({ref: referenceBrainShareModal, 
+    callback: () => {
+      setSharingModalOpen(currVal => !currVal);
+    },
+    when: sharingModalOpen
+  });
+
   return (
     <div className="bg-slate-100 min-h-[100vh] w-full">
       
-      <div className="flex mx-auto">  
+      <div className="flex w-full">  
         {sideOpen && 
           <SideBar setSideOpen={onSideClick} />
         }
 
         <div className="mx-auto">
-          <TopBar setSideOpen={onSideClick} isOpen={sideOpen} setModalOpen={useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-            setModalOpen(currVal => !currVal)
-            event.currentTarget.blur();
-          }, [])} />
+          <TopBar setSideOpen={onSideClick} onShareBrain={showBrainModal} isOpen={sideOpen} setModalOpen={onModalOpen} />
 
           <Content />
         </div>
       </div>
 
-      <CreateContentModal ref={reference} open={modalOpen} onClose={() => {
+      <CreateContentModal ref={referenceContentModal} open={modalOpen} onClose={() => {
         setModalOpen(currVal => !currVal);
       }} />
-    
+
+      <BrainShareModal ref={referenceBrainShareModal} open={sharingModalOpen} sharing="start" URL="kjashfo78weyf234523j5hfds3244" closeModal={() => {
+        setSharingModalOpen(currVal => !currVal);
+      }} />
+
+      
     </div>
   );
 });

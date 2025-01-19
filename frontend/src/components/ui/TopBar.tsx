@@ -8,11 +8,12 @@ interface TopBar{
   setModalOpen: (event: React.MouseEvent<HTMLButtonElement>) => void;
   setSideOpen: () => void;
   isOpen: boolean;
+  onShareBrain: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const TopBar = memo((props: TopBar): ReactElement => {
   return(
-    <div className="h-20 px-4 sm:px-10 min-w-32 flex justify-between items-center max-w-full sm:max-w-xl md:max-w-5xl 2xl:max-w-6xl mx-auto">
+    <div className="h-20 px-5 sm:px-10 md:px-4 lg:px-10 min-w-32 flex justify-between items-center max-w-full mx-auto">
       {
         !props.isOpen &&
         <div className="hover:scale-110 transition-all duration-200">
@@ -30,10 +31,11 @@ const TopBar = memo((props: TopBar): ReactElement => {
           />
         <Button
           variant="secondary"
-          onClick={() => {}}
+          onClick={props.onShareBrain}
           startIcon={<ShareIcon size="sm" strokeWidth="sm" />}
           text="Share Brain"
           size="sm"
+          className="ignore-outside-click"
           />
       </div>
     </div>
