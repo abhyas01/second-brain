@@ -52,7 +52,7 @@ const Dashboard = memo((): ReactElement => {
           <SideBar setSideOpen={onSideClick} />
         }
 
-        <div className="mx-auto">
+        <div className="mx-auto w-fit">
           <TopBar setSideOpen={onSideClick} onShareBrain={showBrainModal} isOpen={sideOpen} setModalOpen={onModalOpen} />
 
           <Content />
