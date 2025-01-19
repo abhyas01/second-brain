@@ -1,9 +1,13 @@
-import { express, bodyParser, mongoose, MONGO_URL, PORT, path } from './configs/config';
+import { express, bodyParser, mongoose, MONGO_URL, PORT, path, cors } from './configs/config';
 import { limiter, publicLimiter } from './limiters/requestLimiter';
 import userRouter from './routes/users';
 import publicRouter from './routes/public';
 
 const app: express.Application = express();
+
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:5173"]
+}));
 
 app.use(bodyParser.json() as express.RequestHandler);
 app.use(bodyParser.urlencoded({ extended: true }) as express.RequestHandler);

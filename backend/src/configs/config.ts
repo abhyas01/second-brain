@@ -7,6 +7,7 @@ import z from 'zod';
 import bcrypt from 'bcrypt';
 import rateLimit from 'express-rate-limit';
 import path from "path";
+import cors from "cors";
 
 dotenv.config();
 
@@ -27,5 +28,6 @@ export {
   JWT_SECRET,
   JWT_EXPIRY,
   rateLimit,
-  path
+  path,
+  cors
 };

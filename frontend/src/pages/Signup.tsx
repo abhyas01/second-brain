@@ -1,13 +1,69 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useState, useRef } from "react";
 import InputBox from "../components/ui/InputBox";
 import Button from "../components/ui/Button";
+import { BACKEND_URL } from '../config';
+import { validateSignupInput } from "../utils/util";
 
 function Signup(): ReactElement{
+
   const [isClicked, setIsClicked] = useState(false);
+  const [errMessage, setErrMsg] = useState<string[]>([]);
+
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordRef2 = useRef<HTMLInputElement>(null);
+
+  async function signup(event: React.MouseEvent){
+    setIsClicked(true);
+    const target = event.currentTarget as HTMLElement;
+
+    const username = usernameRef?.current?.value;
+    const password = passwordRef?.current?.value;
+    const retryPass = passwordRef2?.current?.value;
+    
+    const { isValid, errors } = validateSignupInput(username as string, password as string, retryPass as string);
+    if(!isValid){
+      setErrMsg(errors);
+      setIsClicked(false);
+      target.blur();
+      return;
+    }
+
+    try{
+      const response = await fetch(BACKEND_URL + "/api/v1/users/signup", {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+      if (!response.ok){
+        if (response.status === 411) {
+          const responseJson = await response.json();
+          const errors = Array.isArray(responseJson.msg) ? responseJson.msg : [responseJson.mgs];
+          setErrMsg(errors);
+          return;
+        }
+        throw new Error(`Response Status: ${response.status}`);
+      }
+      const responseJson = await response.json();
+      // save token in db
+      alert(responseJson);
+    } catch(err) {
+      setErrMsg(["Something went wrong. Please try again later."]);
+    } finally {
+      setIsClicked(false);
+      target.blur();
+    }
+  }
+
   return (
-    <div className="h-screen w-screen bg-purple-100 flex justify-center items-center">
+    <div className="min-h-screen min-w-screen py-5 bg-purple-100 flex justify-center items-center">
       
-      <div className="bg-slate-100 px-5 py-16 rounded-lg shadow-lg flex flex-col items-center min-w-fit w-72 sm:w-full max-w-96">
+      <div className="bg-slate-100 px-5 py-16 rounded-lg shadow-lg flex flex-col max-h-[1000px] items-center min-w-fit w-72 sm:w-full max-w-96 mx-5">
         
         <div className="flex flex-col justify-center items-center mb-10 gap-2 w-full">
           <div className="text-md text-slate-500">
@@ -19,14 +75,23 @@ function Signup(): ReactElement{
         </div>
 
         <div className="flex flex-col justify-center items-center gap-4 w-full"> 
-          <InputBox placeholder="Username" className="w-full" />
-          <InputBox placeholder="Password" className="w-full" />
-          <InputBox placeholder="Re-enter Password" className="w-full" />
+          <InputBox ref={usernameRef} placeholder="Username" className="w-full" />
+          <InputBox ref={passwordRef} placeholder="Password" className="w-full" type="password" />
+          <InputBox ref={passwordRef2} placeholder="Re-enter Password" className="w-full" type="password" />
         </div>
 
-        <Button variant="primary" size="md" text="Sign Up" className="mt-10 w-[80%]" disabled={isClicked} onClick={() => {
-          setIsClicked(true);
-        }} />
+        {
+          errMessage.length > 0 && 
+          <div className="mt-6 break-words text-sm text-red-600 max-w-52 text-center">
+            {
+              errMessage.map((err, index) => (
+                <div className="mb-3" key={index}>{err}</div>
+              ))
+            }
+          </div>
+        }
+
+        <Button variant="primary" size="md" text="Sign Up" className={`${errMessage.length > 0 ? "mt-4" : "mt-10"} w-[80%]`} disabled={isClicked} onClick={signup} />
       </div>
 
     </div>
