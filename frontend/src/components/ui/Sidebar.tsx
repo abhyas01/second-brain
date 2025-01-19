@@ -14,7 +14,7 @@ interface SideBarType{
 const SideBar = memo((props: SideBarType): ReactElement => {
 
   return(
-    <div className="z-10 flex flex-col justify-between items-stretch h-screen bg-white left-0 top-0 fixed w-full sm:border-r sm:min-w-56 sm:max-w-56 sm:sticky p-8 sm:p-3">
+    <div className="overflow-auto z-10 flex flex-col justify-between items-stretch h-screen bg-white left-0 top-0 fixed w-full sm:border-r sm:min-w-56 sm:max-w-56 sm:sticky p-8 sm:p-3">
       <div className="flex justify-between items-center mt-3">
         <div className="text-3xl sm:text-2xl font-light text-purple-600 hover:cursor-pointer">
           Second <span className="text-purple-400 font-extrabold">B</span>rain

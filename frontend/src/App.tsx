@@ -1,16 +1,13 @@
 import { ReactElement } from "react";
-import Dashboard from "./pages/Dashboard";
-// import Signup from "./pages/Signup";
-// import Signin from "./pages/Signin";
+import AppRoutes from "./router/AppRoutes";
+import { BrowserRouter } from "react-router-dom";
 
 function App(): ReactElement {
 
   return (
-    <>
-     {/* <Signup /> */}
-     {/* <Signin /> */}
-     <Dashboard />
-    </>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }
 
