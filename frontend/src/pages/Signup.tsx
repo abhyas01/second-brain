@@ -40,24 +40,24 @@ function Signup(): ReactElement{
           password: password
         })
       });
+      const responseJson = await response.json();
       if (!response.ok){
-        if (response.status === 411) {
-          const responseJson = await response.json();
-          const errors = Array.isArray(responseJson.msg) ? responseJson.msg : [responseJson.mgs];
+        if (response.status === 411 || response.status === 403) {
+          const errors = Array.isArray(responseJson.msg) ? responseJson.msg : [responseJson.msg];
           setErrMsg(errors);
           return;
         }
         throw new Error(`Response Status: ${response.status}`);
       }
-      const responseJson = await response.json();
-      // save token in db
-      alert(responseJson);
+      alert(JSON.stringify(responseJson));
+      setErrMsg([]);
     } catch(err) {
       setErrMsg(["Something went wrong. Please try again later."]);
     } finally {
       setIsClicked(false);
       target.blur();
     }
+
   }
 
   return (
