@@ -3,6 +3,7 @@ import InputBox from "../components/ui/InputBox";
 import Button from "../components/ui/Button";
 import { BACKEND_URL } from '../config';
 import { validateSignupInput } from "../utils/util";
+import { useNavigate } from "react-router-dom";
 
 function Signup(): ReactElement{
 
@@ -12,6 +13,8 @@ function Signup(): ReactElement{
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordRef2 = useRef<HTMLInputElement>(null);
+
+  const navigate = useNavigate();
 
   async function signup(event: React.MouseEvent){
     setIsClicked(true);
@@ -49,7 +52,8 @@ function Signup(): ReactElement{
         }
         throw new Error(`Response Status: ${response.status}`);
       }
-      alert(JSON.stringify(responseJson));
+      localStorage.setItem('Auth-Tok', responseJson.token);
+      navigate('/dashboard')
       setErrMsg([]);
     } catch(err) {
       setErrMsg(["Something went wrong. Please try again later."]);
@@ -63,7 +67,7 @@ function Signup(): ReactElement{
   return (
     <div className="min-h-screen min-w-screen py-5 bg-purple-100 flex justify-center items-center">
       
-      <div className="bg-slate-100 px-5 py-16 rounded-lg shadow-lg flex flex-col max-h-[1000px] items-center min-w-fit w-72 sm:w-full max-w-96 mx-5">
+      <div className="bg-slate-100 px-5 pt-16 rounded-lg shadow-lg flex flex-col max-h-[1000px] items-center min-w-fit w-72 sm:w-full max-w-96 mx-5">
         
         <div className="flex flex-col justify-center items-center mb-10 gap-2 w-full">
           <div className="text-md text-slate-500">
@@ -91,7 +95,12 @@ function Signup(): ReactElement{
           </div>
         }
 
-        <Button variant="primary" size="md" text="Sign Up" className={`${errMessage.length > 0 ? "mt-4" : "mt-10"} w-[80%]`} disabled={isClicked} onClick={signup} />
+        <Button variant="primary" size="md" text="Sign up" className={`${errMessage.length > 0 ? "mt-4" : "mt-10"} w-[80%]`} disabled={isClicked} onClick={signup} />
+        
+        <div className="mt-4 text-purple-600 text-sm font-extralight mb-10 underline hover:text-purple-400 cursor-pointer" onClick={() => navigate('/signin') }>
+          I am already a member. Go to Signin?
+        </div>
+
       </div>
 
     </div>
