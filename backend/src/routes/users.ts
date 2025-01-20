@@ -111,6 +111,17 @@ userRouter.post('/content', usersMiddleware as express.RequestHandler, async (re
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+    const link = req.body.link;
+    const type = req.body.type;
+    if(type === "YouTube"){
+      const embedUrl = link
+      ?.replace("watch?v=", "embed/")
+      ?.replace(/&t=(\d+)s/, "?start=$1");
+      if (!embedUrl.includes("youtube.com/embed/")) return res.status(411).json({ msg: "Not a YouTube link, try with Other type?" });
+    } else if(type === "Tweet") {
+      const embedUrl = link.replace("x.com", "twitter.com");
+      if (!embedUrl.includes("twitter.com/")) return res.status(411).json({ msg: "Not a Twitter/X link, try with Other type?" });
+    }
     // const body: z.infer<typeof schema> = req.body;
     const content = await ContentModel.create({
       type: req.body.type,

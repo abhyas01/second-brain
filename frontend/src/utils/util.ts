@@ -69,28 +69,39 @@ function validateContentPost(type: string, link: string, title: string): Validat
   if (!validTypes.includes(type)) {
     errors.push('Type can only be: Tweet/YouTube/Other');
   }
-
   try {
     const url = new URL(link);
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       errors.push('Please provide a valid URL starting with http:// or https://');
     }
+    if (type === 'YouTube') {
+      const embedUrl = link
+        ?.replace('watch?v=', 'embed/')
+        ?.replace(/&t=(\d+)s/, '?start=$1');
+      if (!embedUrl.includes('youtube.com/embed/')) {
+        errors.push('Not a valid YouTube link, try with Other type?');
+      }
+    } else if (type === 'Tweet') {
+      const embedUrl = link.replace('x.com', 'twitter.com');
+      if (!embedUrl.includes('twitter.com/')) {
+        errors.push('Not a valid Twitter/X link, try with Other type?');
+      }
+    }
   } catch {
     errors.push('Please provide a valid URL starting with http:// or https://');
   }
-
   if (title.length < 3) {
     errors.push('Title should be of at least 3 characters');
   }
   if (title.length > 200) {
     errors.push('Title should be of at most 200 characters');
   }
-
   return {
     isValid: errors.length === 0,
     errors,
   };
 }
+
 
 
 export {
