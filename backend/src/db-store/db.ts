@@ -12,17 +12,11 @@ const UserSchema = new Schema({
 const ContentSchema = new Schema({
   type: {
     type: String,
-    enum: ['Document', 'Tweet', 'YouTube', 'Link', 'Social'],
-    required: true
+    enum: ['Other', 'Tweet', 'YouTube']
   },
   link: { type: String, required: true },
   title: { type: String, required: true },
-  tags: [ { type: ObjectId, ref: 'tags' } ],
   userId: { type: ObjectId, ref: 'users', required: true }
-});
-
-const TagsSchema = new Schema({
-  title: { type: String, unique: true, required: true }
 });
 
 const LinkSchema = new Schema({
@@ -40,14 +34,12 @@ const RevokedTokens = new Schema({
 
 const UserModel = Model('users', UserSchema);
 const ContentModel = Model('content', ContentSchema);
-const TagsModel = Model('tags', TagsSchema);
 const LinkModel = Model('link', LinkSchema);
 const RevokedModel = Model('revoked-tokens', RevokedTokens);
 
 export {
   UserModel,
   ContentModel,
-  TagsModel,
   LinkModel,
   RevokedModel
 };

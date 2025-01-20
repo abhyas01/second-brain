@@ -1,4 +1,4 @@
-import { UserModel, ContentModel, TagsModel, LinkModel } from '../db-store/db';
+import { UserModel, ContentModel, LinkModel } from '../db-store/db';
 import { express, z, bcrypt, jwt, JWT_SECRET, JWT_EXPIRY } from '../configs/config';
 import { generateGloballyUniqueString } from '../utils/helperFuncs';
 import { revokeToken } from '../utils/revokeLogic';
@@ -94,91 +94,28 @@ userRouter.post('/signin', async (req: express.Request, res: express.Response): 
   }
 });
 
-userRouter.post('/tags', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
-  try{
-    const schema: z.AnyZodObject = z.object({
-      title: z.string().min(1, {
-        message: 'Tag Name must be of at least 1 character'
-      }).max(10, {
-        message: 'Tag Name must be of at most 10 characters'
-      })
-    }).strict();
-    const parsedWithSuccess = schema.safeParse(req.body);
-    if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
-    // const body: z.infer<typeof schema> = req.body;
-    const tagTitle = req.body.title;
-    const tagExists = await TagsModel.findOne({
-      title: tagTitle
-    });
-    if (tagExists) return res.status(403).json({ msg: 'Tag already exists, illegal request' });
-    const tagCreated = await TagsModel.create({
-      title: tagTitle
-    });
-    const tagCreatedObject = tagCreated.toObject() as Record<string, any>;
-    delete tagCreatedObject.__v;
-    res.status(200).json({
-      tagCreated: true,
-      tagContent: tagCreatedObject
-    });
-  } catch(err){
-    res.status(500).json({
-      msg: 'Server is facing some error'
-    });
-  }
-});
-
-userRouter.get('/tags', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
-  try{
-    const tags = await TagsModel.find({}).select('title _id');
-    res.status(200).json({
-      tags: tags
-    });
-  } catch(err){
-    res.status(500).json({
-      msg: 'Server is facing some error'
-    });
-  }
-});
-
 userRouter.post('/content', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<any> => {
   try{
     const schema: z.AnyZodObject = z.object({
-      type: z.enum(['Document', 'Tweet', 'YouTube', 'Link', 'Social'], {
-        message: 'type can only be: Document/Tweet/YouTube/Link/Social'
+      type: z.enum(['Other', 'Tweet', 'YouTube'], {
+        message: 'Type can only be: Tweet/YouTube/Other'
       }),
       link: z.string().url({
         message: 'Please provide a valid URL starting with http:// or https://'
       }),
       title: z.string().min(3, {
         message: 'Title should be of at least 3 characters'
-      }).max(30, {
-        message: 'Title should be of at most 30 characters'
-      }),
-      tags: z.array(z.string().length(24, {
-        message: 'Invalid tags'
-      }).regex(/^[a-fA-F0-9]+$/, {
-        message: 'Invalid tags'
-      }))
+      }).max(200, {
+        message: 'Title should be of at most 200 characters'
+      })
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
     // const body: z.infer<typeof schema> = req.body;
-    let validTags;
-    try{
-      validTags = await TagsModel.find({
-        _id: { $in: req.body.tags }
-      });
-    } catch(err){
-      return res.status(411).json({ msg: 'Invalid tags' });
-    }
-    if (validTags.length !== req.body.tags.length){
-      return res.status(411).json({ msg: 'Invalid tags' });
-    }
     const content = await ContentModel.create({
       type: req.body.type,
       link: req.body.link,
       title: req.body.title,
-      tags: req.body.tags,
       userId: req.id
     });
     const contentObject = content.toObject() as Record<string, any>;
@@ -204,10 +141,6 @@ userRouter.get('/content', usersMiddleware as express.RequestHandler, async (req
       .populate({
         path: 'userId',
         select: 'username -_id',
-      })
-      .populate({
-        path: 'tags',
-        select: 'title _id',
       })
       .lean();
     const transformedContents = contents.map((content: any) => {
@@ -256,13 +189,13 @@ userRouter.post('/brain/share', usersMiddleware as express.RequestHandler, async
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) {
-      return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
+      return res.status(411).json({ msg: "Invalid request" });
     }
     // const body: z.infer<typeof schema> = req.body;
     if (req.body.share) {
       const findDuplicate = await LinkModel.findOne({ userId: req.id }, 'hash -_id');
       if (findDuplicate) {
-        return res.status(200).json({ msg: 'Link sharing already enabled', hash: findDuplicate.hash });
+        return res.status(204).json({ msg: 'Link sharing already enabled', hash: findDuplicate.hash });
       } else {
         const uniqueHash: string = generateGloballyUniqueString();
         await LinkModel.create({

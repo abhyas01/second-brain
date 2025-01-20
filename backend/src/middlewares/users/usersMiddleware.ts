@@ -3,7 +3,7 @@ import { isTokenRevoked } from "../../utils/revokeLogic";
 
 function usersMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): express.Response | void {
   try{
-    const token = req.headers['auth-key'];
+    const token = req.headers?.['x-auth-key'];
     if (!token || typeof(token) !== 'string'){
       return res.status(401).json({ msg: 'Unauthorized' });
     }
@@ -20,7 +20,7 @@ function usersMiddleware(req: express.Request, res: express.Response, next: expr
       }
     });
   } catch (err){
-    res.status(500).json({ msg: 'Server is facing error' });
+    res.status(501).json({ msg: 'Cannot Authenticate. Server is facing some Error.' });
   }
 }
 

@@ -63,8 +63,38 @@ function validateSigninInput(username: string, password: string): ValidationResu
   };
 }
 
+function validateContentPost(type: string, link: string, title: string): ValidationResult {
+  const errors: string[] = [];
+  const validTypes = ['Other', 'Tweet', 'YouTube'];
+  if (!validTypes.includes(type)) {
+    errors.push('Type can only be: Tweet/YouTube/Other');
+  }
+
+  try {
+    const url = new URL(link);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      errors.push('Please provide a valid URL starting with http:// or https://');
+    }
+  } catch {
+    errors.push('Please provide a valid URL starting with http:// or https://');
+  }
+
+  if (title.length < 3) {
+    errors.push('Title should be of at least 3 characters');
+  }
+  if (title.length > 200) {
+    errors.push('Title should be of at most 200 characters');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
 
 export {
   validateSignupInput,
-  validateSigninInput
+  validateSigninInput,
+  validateContentPost
 };
