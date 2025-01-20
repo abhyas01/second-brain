@@ -83,7 +83,7 @@ const CreateContentModal = forwardRef<HTMLDivElement, propsModal>((props: propsM
   }
   
     return (
-      <div className="z-20 inset-0 fixed w-screen h-screen bg-gradient-to-t from-black/90 to-transparent/70 flex justify-center items-center">
+      <div className="z-30 inset-0 fixed w-screen h-screen bg-gradient-to-t from-black/90 to-transparent/70 flex justify-center items-center">
         <div ref={reference} className="bg-slate-100 p-5 m-3 overflow-auto max-h-[650px] rounded-lg min-w-72 sm:w-96 max-w-xl flex flex-col items-stretch gap-4">
           
           <div className="flex justify-end items-center mb-6">

@@ -13,7 +13,7 @@ const BrainShareModal = forwardRef<HTMLDivElement, BrainShareModalType>((props: 
     return null;
   }
   return(
-    <div className="inset-0 z-20 fixed w-screen h-screen bg-gradient-to-t from-black/60 to-transparent/50 flex justify-center items-center">
+    <div className="inset-0 z-30 fixed w-screen h-screen bg-gradient-to-t from-black/60 to-transparent/50 flex justify-center items-center">
       <div ref={reference} className="bg-slate-100 p-5 rounded-lg min-w-72 sm:w-96 max-w-xl flex flex-col items-stretch gap-4 mx-5">
         
         <div className="flex justify-end items-center mb-3">

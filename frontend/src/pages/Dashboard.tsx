@@ -11,9 +11,14 @@ const Dashboard = memo((): ReactElement => {
   const [modalOpen, setModalOpen] = useState(false);
   const [sharingModalOpen, setSharingModalOpen] = useState(false);
   const [sideOpen, setSideOpen] = useState(true);
+  const [pageType, setPageType] = useState<string>('All');
 
   const referenceContentModal = useRef<HTMLDivElement>(null);
   const referenceBrainShareModal = useRef<HTMLDivElement>(null);
+
+  const setPage = useCallback((type: string) => {
+    setPageType(type);
+  }, []);
 
   const onSideClick = useCallback(() => {
     setSideOpen(currVal => !currVal);
@@ -49,13 +54,13 @@ const Dashboard = memo((): ReactElement => {
       
       <div className="flex w-full">  
         {sideOpen && 
-          <SideBar setSideOpen={onSideClick} />
+          <SideBar setPageType={setPage} pageType={pageType} setSideOpen={onSideClick} />
         }
 
-        <div className="mx-auto w-fit">
-          <TopBar setSideOpen={onSideClick} onShareBrain={showBrainModal} isOpen={sideOpen} setModalOpen={onModalOpen} />
+        <div className="mx-auto w-full max-w-8xl">
+          <TopBar pageType={pageType} setSideOpen={onSideClick} onShareBrain={showBrainModal} isOpen={sideOpen} setModalOpen={onModalOpen} />
 
-          <Content />
+          <Content pageType={pageType} />
         </div>
       </div>
 

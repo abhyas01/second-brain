@@ -12,6 +12,7 @@ interface ButtonProps{
   className?: string;
   onClick: ((event: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
   disabled?: boolean;
+  topBarComp?: boolean;
 };
 
 const defaultStyles = "rounded-md inline-flex justify-center items-center";
@@ -20,6 +21,12 @@ const sizeStyles: Record<Size, string> = {
   "sm": "py-1 px-2 text-sm",
   "md": "py-2 px-4 text-md",
   "lg": "py-4 px-7 text-lg"
+};
+
+const sizeStylesTopBar: Record<Size, string> = {
+  "sm": "py-1 sm:px-2 px-[2px]  text-sm",
+  "md": "py-2 sm:px-4 px-[4px] text-md",
+  "lg": "py-4 sm:px-7 px-[6px] text-lg"
 };
 
 const variantStyles: Record<Variants, string> = {
@@ -33,7 +40,7 @@ const Button = (props: ButtonProps): ReactElement => {
       className={`
         ${defaultStyles}
         ${variantStyles[props.variant]}
-        ${sizeStyles[props.size]}
+        ${props.topBarComp ? sizeStylesTopBar[props.size] : sizeStyles[props.size] }
         ${props.className}
         ${props.disabled ? "disabled hover:cursor-wait opacity-50" : ""}
       `}
