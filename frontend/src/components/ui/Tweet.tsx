@@ -1,5 +1,11 @@
 import { ReactElement, useEffect } from "react";
 
+declare global{
+  interface Window{
+    twttr: any;
+  }
+}
+
 function Tweet(props: { url: string, className?: string, divClassName?: string }): ReactElement {
 
   useEffect(() => {
@@ -8,18 +14,15 @@ function Tweet(props: { url: string, className?: string, divClassName?: string }
       script.src = "https://platform.twitter.com/widgets.js";
       script.async = true;
       document.head.appendChild(script);
+    } else {
+      if (window.twttr && window.twttr.widgets) {
+        window.twttr.widgets.load();
+      }
     }
   }, []);
   
-  const embedUrl = props.url.replace("x.com", "twitter.com");
-  
-  if (!embedUrl.includes("twitter.com/")) {
-    return (
-    <div className="content-center text-center my-auto text-sm">
-      Invalid Tweet URL
-    </div>
-    );
-  }
+  const [username, statusId] = props.url.split('/');
+  const embedUrl = `https://twitter.com/${username}/status/${statusId}`;
 
   return (
     <div className={`${props.divClassName}`}>

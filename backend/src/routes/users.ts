@@ -111,21 +111,31 @@ userRouter.post('/content', usersMiddleware as express.RequestHandler, async (re
     }).strict();
     const parsedWithSuccess = schema.safeParse(req.body);
     if (!parsedWithSuccess.success) return res.status(411).json({ msg: parsedWithSuccess.error.errors.map(err => err.message) });
-    let link = req.body.link;
+    
+    const link = req.body.link;
     const type = req.body.type;
+    let videoId: string | null = null;
+    let tweetUsername: string | null = null;
+    let tweetStatusId: string | null = null;
+
     if(type === "YouTube"){
-      link = link
-      ?.replace("watch?v=", "embed/")
-      ?.replace(/&t=(\d+)s/, "?start=$1");
-      if (!link.includes("youtube.com/embed/")) return res.status(411).json({ msg: "Not a YouTube link, try with Other type?" });
+      const videoIdMatch = link.match(/v=([^&]+)/) || link.match(/\/embed\/([^/?]+)/);
+      videoId = videoIdMatch ? videoIdMatch[1] : null;
+      if (!videoId && !link.includes('youtube.com')) return res.status(411).json({ msg: "Not a YouTube link, try with Other type?" });
     } else if(type === "Tweet") {
-      link = link.replace("x.com", "twitter.com");
-      if (!link.includes("twitter.com/")) return res.status(411).json({ msg: "Not a Twitter/X link, try with Other type?" });
+      const tweetMatch = link.replace("x.com", "twitter.com").match(/twitter\.com\/([^\/]+)\/status\/(\d+)/);
+      if (tweetMatch) {
+        tweetUsername = tweetMatch[1];
+        tweetStatusId = tweetMatch[2];
+      }
+      if (!tweetUsername || !tweetStatusId) {
+        return res.status(411).json({ msg: "Not a valid Twitter link, try with Other type?" });
+      }
     }
     // const body: z.infer<typeof schema> = req.body;
     const content = await ContentModel.create({
       type: type,
-      link: link,
+      link: type === "YouTube" ? videoId : type === "Tweet" ? `${tweetUsername}/${tweetStatusId}` : link,
       title: req.body.title,
       userId: req.id
     });
@@ -147,6 +157,87 @@ userRouter.get('/content/all', usersMiddleware as express.RequestHandler, async 
   try {
     const contents = await ContentModel.find(
       { userId: req.id },
+      '-__v'
+    )
+      .populate({
+        path: 'userId',
+        select: 'username -_id',
+      })
+      .lean();
+    const transformedContents = contents.map((content: any) => {
+      const { userId, ...rest } = content;
+      return { ...rest, user: userId };
+    });
+    res.status(200).json({
+      contents: transformedContents,
+    });
+  } catch (err) {
+    res.status(500).json({
+      msg: 'Server is facing some error',
+    });
+  }
+});
+
+userRouter.get('/content/tweet', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
+  try {
+    const contents = await ContentModel.find(
+      { userId: req.id,
+        type: 'Tweet'
+      },
+      '-__v'
+    )
+      .populate({
+        path: 'userId',
+        select: 'username -_id',
+      })
+      .lean();
+    const transformedContents = contents.map((content: any) => {
+      const { userId, ...rest } = content;
+      return { ...rest, user: userId };
+    });
+    res.status(200).json({
+      contents: transformedContents,
+    });
+  } catch (err) {
+    res.status(500).json({
+      msg: 'Server is facing some error',
+    });
+  }
+});
+
+userRouter.get('/content/youtube', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
+  try {
+    const contents = await ContentModel.find(
+      { userId: req.id,
+        type: 'YouTube'
+      },
+      '-__v'
+    )
+      .populate({
+        path: 'userId',
+        select: 'username -_id',
+      })
+      .lean();
+    const transformedContents = contents.map((content: any) => {
+      const { userId, ...rest } = content;
+      return { ...rest, user: userId };
+    });
+    res.status(200).json({
+      contents: transformedContents,
+    });
+  } catch (err) {
+    res.status(500).json({
+      msg: 'Server is facing some error',
+    });
+  }
+});
+
+userRouter.get('/content/other', usersMiddleware as express.RequestHandler, async (req: express.Request, res: express.Response): Promise<void> => {
+  try {
+    const contents = await ContentModel.find(
+      { userId: req.id,
+        type: 'Other'
+      },
       '-__v'
     )
       .populate({

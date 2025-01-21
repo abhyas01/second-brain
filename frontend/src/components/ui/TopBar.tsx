@@ -14,7 +14,7 @@ interface TopBar{
 
 const TopBar = memo((props: TopBar): ReactElement => {
   return(
-    <div className="z-10 bg-white shadow-lg rounded-md sticky top-0 h-20 px-2 sm:px-10 md:px-4 lg:px-10 min-w-32 flex justify-between items-center max-w-8xl w-full mx-auto">
+    <div className="z-10 bg-white shadow-lg rounded-b-md sticky top-0 h-20 px-2 sm:px-10 md:px-4 lg:px-10 min-w-32 flex justify-between items-center max-w-8xl w-full mx-auto">
       {
         !props.isOpen &&
         <div className="flex justify-center items-center">

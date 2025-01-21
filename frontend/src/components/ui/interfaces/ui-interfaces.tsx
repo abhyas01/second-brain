@@ -4,4 +4,5 @@ export interface CardProps {
   title: string;
   link: string;
   type: 'Other' | 'Tweet' | 'YouTube';
+  username: string;
 }

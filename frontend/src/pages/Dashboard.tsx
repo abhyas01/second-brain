@@ -50,7 +50,7 @@ const Dashboard = memo((): ReactElement => {
   });
 
   return (
-    <div className="bg-slate-100 min-h-[100vh] w-full">
+    <div className="bg-slate-200 min-h-[100vh] w-full">
       
       <div className="flex w-full">  
         {sideOpen && 
